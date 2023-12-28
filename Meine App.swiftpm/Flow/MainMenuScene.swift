@@ -56,29 +56,50 @@ class MenuScene: SKScene {
         self.size = viewSize
         backgroundColor = SKColor.black
         
-        // Título do menu
-        let titleLabel = SKLabelNode(fontNamed: "Arial")
-        titleLabel.text = "Menu"
-        titleLabel.fontSize = 50
-        titleLabel.position = CGPoint(x: size.width / 2, y: size.height - 100)
-        addChild(titleLabel)
+        //Background
+        let background = SKSpriteNode(imageNamed: "backgroundImage")
+        background.scale(to: size)
+        background.position = CGPoint(x: size.width/2, y: size.height/2)
+        background.zPosition = -1
+        addChild(background)
         
-        // Botão "Jogar"
-        let playButton = SKLabelNode(fontNamed: "Arial")
-        playButton.text = "Jogar"
-        playButton.fontSize = 40
-        playButton.fontColor = .blue
-        playButton.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        //Sound Button
+        let soundButton = SKSpriteNode(imageNamed: "SoundButton")
+        soundButton.scale(to: CGSize(width: 48, height: 48))
+        soundButton.position = CGPoint(x: size.width - 100, y: size.height - 100)
+        soundButton.zPosition = 1
+        soundButton.name = "soundButton"
+        addChild(soundButton)
+        
+        // Title
+        let titleMenu = SKSpriteNode(imageNamed: "TitleMenu")
+        titleMenu.scale(to: CGSize(width: 192, height: 96))
+        titleMenu.position = CGPoint(x: size.width / 2, y: size.height / 2 + 192)
+        titleMenu.zPosition = 1
+        addChild(titleMenu)
+        
+        // Botton "Play"
+        let playButton = SKSpriteNode(imageNamed: "Button")
+        playButton.scale(to: CGSize(width: 192, height: 96))
+        playButton.position = CGPoint(x: size.width / 2, y: size.height / 2 - 70)
         playButton.name = "playButton"
         addChild(playButton)
         
-        // Botão "Créditos"
-        let creditsButton = SKLabelNode(fontNamed: "Arial")
-        creditsButton.text = "Créditos"
-        creditsButton.fontSize = 40
-        creditsButton.position = CGPoint(x: size.width / 2, y: size.height / 2 - 100)
+        // Button "Credits"
+        let creditsButton = SKSpriteNode(imageNamed: "Button")
+        creditsButton.scale(to: CGSize(width: 192, height: 96))
+        creditsButton.position = CGPoint(x: size.width / 2, y: size.height / 2 - 190)
         creditsButton.name = "creditsButton"
         addChild(creditsButton)
+        
+        // Button "Configurations"
+        let optionsButton = SKSpriteNode(imageNamed: "Button")
+        optionsButton.scale(to: CGSize(width: 192, height: 96))
+        optionsButton.position = CGPoint(x: size.width / 2, y: size.height / 2 - 310)
+        optionsButton.name = "optionsButton"
+        addChild(optionsButton)
+
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -87,23 +108,66 @@ class MenuScene: SKScene {
             let touchedNode = atPoint(location)
             
             if let name = touchedNode.name {
-                if name == "playButton" {
-                    // Ação para iniciar o jogo
-                    print("Iniciar jogo...")
-                    // Exemplo: Transição para a cena do jogo
-                    let gameScene = GameScene(size: size)
-                    gameScene.scaleMode = scaleMode
-                    view?.presentScene(gameScene)
-                } else if name == "creditsButton" {
-                    // Ação para mostrar os créditos
-                    print("Mostrar créditos...")
-                    // Exemplo: Transição para a cena de créditos
-                    let creditsScene = CreditsScene(size: size)
-                    creditsScene.scaleMode = scaleMode
-                    view?.presentScene(creditsScene)
+                if(name.contains("Button")) {
+                    SoundManager.shared.playSound(soundName: "A0", fileType: "mp3")
+                }
+                switch name {
+                case "playButton":
+                    if let playButton = touchedNode as? SKSpriteNode {
+                        let gameScene = GameScene(size: self.size)
+                        gameScene.scaleMode = self.scaleMode
+                        performTransition(nextScene: gameScene, button: playButton)    
+                        SoundManager.shared.playSound(soundName: "A0", fileType: "mp3")
+                    }
+                    break
+                case "creditsButton":
+                    if let creditsButton = touchedNode as? SKSpriteNode {
+                        let creditsScene = CreditsScene(size: self.size)
+                        creditsScene.scaleMode = self.scaleMode
+                        performTransition(nextScene: creditsScene, button: creditsButton)
+                    }
+                    break
+                case "optionsButton":
+                    if let optionsButton = touchedNode as? SKSpriteNode {
+                        let optionsScene = OptionsScene(size: self.size)
+                        optionsScene.scaleMode = self.scaleMode
+                        performTransition(nextScene: optionsScene, button: optionsButton)
+                    }
+                    
+                    break
+                case "soundButton":  
+                    if let soundButton = touchedNode as? SKSpriteNode {
+                        animateSoundButtonPressed(button: soundButton)    
+                    }
+                    break
+                default:
+                    break
                 }
             }
         }
+    }
+    func performTransition(nextScene: SKScene, button: SKSpriteNode) {
+        button.texture = SKTexture(imageNamed: "ButtonPressed")
+        let waitForAnimation = SKAction.wait(forDuration: 0.2)
+        
+    #warning("lembrar de colocar um opacity aqui pra dar blur, um blur seria daora")
+        // Run the action on the whole scene
+        self.run(waitForAnimation) {
+            // Transition to the next scene after the fade-out effect
+            self.view?.presentScene(nextScene)
+        }
+    }
+    func animateSoundButtonPressed(button: SKSpriteNode) {
+        let soundButtonPressedTexture = SKTexture(imageNamed: "SoundButtonPressed")
+        let soundButtonTexture = SKTexture(imageNamed: "SoundButton")
+        
+        let changeToPressed = SKAction.setTexture(soundButtonPressedTexture)
+        let wait = SKAction.wait(forDuration: 0.2)
+        let changeToNormal = SKAction.setTexture(soundButtonTexture)
+        
+        let sequence = SKAction.sequence([changeToPressed, wait, changeToNormal])
+        
+        button.run(sequence)
     }
 }
 

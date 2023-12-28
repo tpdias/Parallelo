@@ -1,21 +1,30 @@
 import SwiftUI
 import SpriteKit
 
-class CreditsScene: SKScene {
-    override func didMove(to view: SKView) {        
+class OptionsScene: SKScene {
+    var toggleState: Bool = false
+    override func didMove(to view: SKView) {
+
         //Background
         let background = SKSpriteNode(imageNamed: "backgroundImage")
         background.scale(to: size)
         background.position = CGPoint(x: size.width/2, y: size.height/2)
         background.zPosition = -1
-        addChild(background)
+        addChild(background)        
         
-        // Credits Label
-        let titleCredits = SKSpriteNode(imageNamed: "titleCredits")
-        titleCredits.scale(to: CGSize(width: 200, height: 100))
-        titleCredits.position = CGPoint(x: size.width / 2, y: size.height / 2 + 200)
-        titleCredits.zPosition = 1
-        addChild(titleCredits)
+        // Options Label
+        let titleOptions = SKSpriteNode(imageNamed: "titleOptions")
+        titleOptions.scale(to: CGSize(width: 200, height: 100))
+        titleOptions.position = CGPoint(x: size.width / 2, y: size.height / 2 + 200)
+        titleOptions.zPosition = 1
+        addChild(titleOptions)
+        
+        let toggle = SKSpriteNode(imageNamed: "ToggleOff")
+        toggle.scale(to: CGSize(width: 192, height: 96))
+        toggle.position = CGPoint(x: size.width/2, y: size.height/2)
+        toggle.zPosition = 1
+        toggle.name = "toggle"
+        addChild(toggle)
         
         //Back Button, return to menu on click
         let backButton = SKSpriteNode(imageNamed: "BackButton")
@@ -33,7 +42,6 @@ class CreditsScene: SKScene {
             
             if let name = touchedNode.name {
                 if name == "backButton" {
-                    // Voltar para o menu principal
                     SoundManager.shared.playSound(soundName: "A0", fileType: "mp3")
                     if let backButton = touchedNode as? SKSpriteNode {
                         let menuScene = MenuScene(size: size)
@@ -41,8 +49,31 @@ class CreditsScene: SKScene {
                         performTransition(nextScene: menuScene, button: backButton)
                     }
                 }
+                else if name == "toggle" {
+                    if let toggleButton = touchedNode as? SKSpriteNode {
+                        animateToggle(toggle: toggleButton)
+                        self.toggleState.toggle()
+                    }
+                }
             }
         }
+    }
+    func animateToggle(toggle: SKSpriteNode) {
+        let transitionTexture = SKTexture(imageNamed: "ToggleTransition")
+        var nextTexture = SKTexture()
+        if(self.toggleState){
+            nextTexture = SKTexture(imageNamed: "ToggleOff")
+        } else {
+            nextTexture = SKTexture(imageNamed: "ToggleOn")
+        }
+                
+        let changeToTransition = SKAction.setTexture(transitionTexture)
+        let wait = SKAction.wait(forDuration: 0.1)
+        let changeToOn = SKAction.setTexture(nextTexture)
+        
+        let sequence = SKAction.sequence([changeToTransition, wait, changeToOn])
+        
+        toggle.run(sequence)
     }
     func performTransition(nextScene: SKScene, button: SKSpriteNode) {
         button.texture = SKTexture(imageNamed: "BackButtonPressed")
