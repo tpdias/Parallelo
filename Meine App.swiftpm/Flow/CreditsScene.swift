@@ -34,7 +34,9 @@ class CreditsScene: SKScene {
             if let name = touchedNode.name {
                 if name == "backButton" {
                     // Voltar para o menu principal
-                    SoundManager.shared.playSound(soundName: "A0", fileType: "mp3")
+                    if(AppManager.shared.soundStatus){
+                        SoundManager.shared.playSound(soundName: "A0", fileType: "mp3")
+                    }
                     if let backButton = touchedNode as? SKSpriteNode {
                         let menuScene = MenuScene(size: size)
                         menuScene.scaleMode = scaleMode
@@ -47,10 +49,12 @@ class CreditsScene: SKScene {
     func performTransition(nextScene: SKScene, button: SKSpriteNode) {
         button.texture = SKTexture(imageNamed: "BackButtonPressed")
         let waitForAnimation = SKAction.wait(forDuration: 0.2)
+        let fadeOut = SKAction.fadeOut(withDuration: 0.4)
         
-#warning("lembrar de colocar um opacity aqui pra dar blur, um blur seria daora")
+        let sequence = SKAction.sequence([waitForAnimation, fadeOut])
+        
         // Run the action on the whole scene
-        self.run(waitForAnimation) {
+        self.run(sequence) {
             // Transition to the next scene after the fade-out effect
             self.view?.presentScene(nextScene)
         }

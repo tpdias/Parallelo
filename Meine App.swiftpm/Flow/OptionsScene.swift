@@ -2,7 +2,8 @@ import SwiftUI
 import SpriteKit
 
 class OptionsScene: SKScene {
-    var toggleState: Bool = false
+    
+    
     override func didMove(to view: SKView) {
 
         //Background
@@ -19,12 +20,48 @@ class OptionsScene: SKScene {
         titleOptions.zPosition = 1
         addChild(titleOptions)
         
-        let toggle = SKSpriteNode(imageNamed: "ToggleOff")
-        toggle.scale(to: CGSize(width: 192, height: 96))
-        toggle.position = CGPoint(x: size.width/2, y: size.height/2)
-        toggle.zPosition = 1
-        toggle.name = "toggle"
-        addChild(toggle)
+        
+        //sound
+        
+        let soundLabel = SKLabelNode(text: "Sound")
+        soundLabel.fontSize = 34
+        soundLabel.fontColor = .white
+        soundLabel.fontName = "Calibri-Bold"
+        soundLabel.position = CGPoint(x: size.width/2, y: size.height/2 + 50)
+        soundLabel.zPosition = 1
+        addChild(soundLabel)
+        
+        
+        let soundSprite = SKSpriteNode(imageNamed: "ToggleOff")
+        if(AppManager.shared.soundStatus) {
+            soundSprite.texture = SKTexture(imageNamed: "ToggleOn")
+        }
+        soundSprite.position = CGPoint(x: size.width/2, y: soundLabel.position.y - 50)
+        soundSprite.zPosition = 1
+        soundSprite.scale(to: CGSize(width: 96, height: 48))
+        soundSprite.name = "soundToggle"
+        addChild(soundSprite)
+        
+        //voice over
+        
+        let voiceOverLabel = SKLabelNode(text: "Voice Over")
+        voiceOverLabel.fontSize = 34
+        voiceOverLabel.fontName = "Calibri-Bold"
+        voiceOverLabel.fontColor = .white
+        voiceOverLabel.position = CGPoint(x: size.width/2, y: soundSprite.position.y - 100)
+        voiceOverLabel.zPosition = 1
+        addChild(voiceOverLabel)
+        
+        let voiceOverSprite = SKSpriteNode(imageNamed: "ToggleOff")
+        if(AppManager.shared.voiceOverStatus) {
+            voiceOverSprite.texture = SKTexture(imageNamed: "ToggleOn")
+        }
+        voiceOverSprite.position = CGPoint(x: size.width/2, y: voiceOverLabel.position.y - 50)
+        voiceOverSprite.name = "voiceOverToggle"
+        voiceOverSprite.scale(to: CGSize(width: 96, height: 48))
+        voiceOverSprite.zPosition = 1
+        addChild(voiceOverSprite)
+    
         
         //Back Button, return to menu on click
         let backButton = SKSpriteNode(imageNamed: "BackButton")
@@ -41,47 +78,45 @@ class OptionsScene: SKScene {
             let touchedNode = atPoint(location)
             
             if let name = touchedNode.name {
-                if name == "backButton" {
+                if(name.contains("Button") && AppManager.shared.soundStatus) {
                     SoundManager.shared.playSound(soundName: "A0", fileType: "mp3")
+                }
+                switch name {
+                case "backButton":
                     if let backButton = touchedNode as? SKSpriteNode {
                         let menuScene = MenuScene(size: size)
                         menuScene.scaleMode = scaleMode
                         performTransition(nextScene: menuScene, button: backButton)
                     }
-                }
-                else if name == "toggle" {
-                    if let toggleButton = touchedNode as? SKSpriteNode {
-                        animateToggle(toggle: toggleButton)
-                        self.toggleState.toggle()
+                case "soundToggle":
+                    if let soundToggle = touchedNode as? SKSpriteNode {
+                        AppManager.shared.soundStatus.toggle()
+                        AppManager.shared.animateToggle(toggle: soundToggle, toggleState: AppManager.shared.soundStatus)
                     }
+                    break
+                case "voiceOverToggle":
+                    if let voiceOverToggle = touchedNode as? SKSpriteNode {
+                        AppManager.shared.voiceOverStatus.toggle()
+                        AppManager.shared.animateToggle(toggle: voiceOverToggle, toggleState: AppManager.shared.voiceOverStatus)
+                    }
+                    break
+                default:
+                    break
                 }
+            
             }
         }
     }
-    func animateToggle(toggle: SKSpriteNode) {
-        let transitionTexture = SKTexture(imageNamed: "ToggleTransition")
-        var nextTexture = SKTexture()
-        if(self.toggleState){
-            nextTexture = SKTexture(imageNamed: "ToggleOff")
-        } else {
-            nextTexture = SKTexture(imageNamed: "ToggleOn")
-        }
-                
-        let changeToTransition = SKAction.setTexture(transitionTexture)
-        let wait = SKAction.wait(forDuration: 0.1)
-        let changeToOn = SKAction.setTexture(nextTexture)
-        
-        let sequence = SKAction.sequence([changeToTransition, wait, changeToOn])
-        
-        toggle.run(sequence)
-    }
+    
     func performTransition(nextScene: SKScene, button: SKSpriteNode) {
         button.texture = SKTexture(imageNamed: "BackButtonPressed")
         let waitForAnimation = SKAction.wait(forDuration: 0.2)
+        let fadeOut = SKAction.fadeOut(withDuration: 0.4)
         
-#warning("lembrar de colocar um opacity aqui pra dar blur, um blur seria daora")
+        let sequence = SKAction.sequence([waitForAnimation, fadeOut])
+        
         // Run the action on the whole scene
-        self.run(waitForAnimation) {
+        self.run(sequence) {
             // Transition to the next scene after the fade-out effect
             self.view?.presentScene(nextScene)
         }
