@@ -1,5 +1,6 @@
 import SpriteKit
 import SwiftUI
+import UIKit
 
 struct MainMenuView: View {
     var body: some View {
@@ -35,16 +36,24 @@ class MenuScene: SKScene {
     var initialSize: CGSize = .zero
     
     override func didMove(to view: SKView) {
-        self.size = view.bounds.size // Adjusts the scene size to match the view's size
+        self.size = view.bounds.size
         createMenu()
+        
+        //check the orientation
+        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
+
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
     }
     
     override var size: CGSize {
         get {
-            return self.initialSize // Retorna o tamanho armazenado
+            return self.initialSize // Return the size
         }
         set {
-            // Define o tamanho somente na inicialização
+            // define the size
             if self.initialSize == .zero {
                 self.initialSize = newValue
             }
@@ -57,9 +66,10 @@ class MenuScene: SKScene {
         backgroundColor = SKColor.black
         
         //Background
-        let background = SKSpriteNode(imageNamed: "backgroundImage")
+        let background = SKSpriteNode(imageNamed: "ApplePark")
         background.scale(to: size)
-        background.position = CGPoint(x: size.width/2, y: size.height/2)
+        background.anchorPoint = CGPoint(x: 0, y: 0)
+        background.position = CGPoint(x: 0, y: -20)
         background.zPosition = -1
         addChild(background)
         
@@ -192,6 +202,18 @@ class MenuScene: SKScene {
             self.view?.presentScene(nextScene)
         }
     }
+    
+    @objc func orientationDidChange() {
+        // Função chamada quando a orientação do dispositivo muda
+        if UIDevice.current.orientation.isPortrait {
+            print("Orientação: Retrato")
+        } else if UIDevice.current.orientation.isLandscape {
+            print("Orientação: Paisagem")
+        } else {
+            print("Orientação: Desconhecida")
+        }
+    }
+
 //    func animateSoundButtonPressed(button: SKSpriteNode) {
 //        let soundButtonPressedTexture = SKTexture(imageNamed: "SoundButtonPressed")
 //        var soundButtonImage = "SoundButton"

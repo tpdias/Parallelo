@@ -3,7 +3,12 @@ import SpriteKit
 
 class PresentationScene: SKScene {
     let nextButton: SKSpriteNode? = nil
+    var pauseNode: PauseNode?
     override func didMove(to view: SKView) {        
+        pauseNode = PauseNode(size: self.size)
+        if let pauseNode = pauseNode {
+            addChild(pauseNode)
+        }
         #warning("fazer a animacao dos botoes no app manager, so colocar um + \"pressed\" na texture e animar o nodo")
         //chat
         generateFirstChat()

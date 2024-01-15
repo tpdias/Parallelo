@@ -4,9 +4,9 @@ import SpriteKit
 class CreditsScene: SKScene {
     override func didMove(to view: SKView) {        
         //Background
-        let background = SKSpriteNode(imageNamed: "backgroundImage")
+        let background = SKSpriteNode(imageNamed: "ApplePark")
         background.scale(to: size)
-        background.position = CGPoint(x: size.width/2, y: size.height/2)
+        background.position = CGPoint(x: size.width/2, y: size.height/2 - 20)
         background.zPosition = -1
         addChild(background)
         

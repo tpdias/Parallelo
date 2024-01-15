@@ -5,8 +5,9 @@ class AppManager {
     static let shared = AppManager()
     
     var soundStatus: Bool = true
+    var pauseStatus: Bool = false 
     var voiceOverStatus: Bool = false
-    var appFont: String = "Calibri-Bold"
+    var appFont: String = "Retro Gaming" // it's not working on playgrounds :/
     
     
     func animateToggle(toggle: SKSpriteNode, toggleState: Bool) {
@@ -40,4 +41,28 @@ class AppManager {
                 }
             }
         }
+    
+    func animateButton(button: SKSpriteNode, textureName: String) {
+        button.texture = SKTexture(imageNamed: textureName + "Pressed")
+        let waitForAnimation = SKAction.wait(forDuration: 0.2)
+        button.run(waitForAnimation) {
+            button.texture = SKTexture(imageNamed: textureName)
+        }
+    }
+    
+    func changePauseStatus(pauseNode: PauseNode) {
+        AppManager.shared.pauseStatus.toggle()
+        if(AppManager.shared.pauseStatus) {
+            pauseNode.pauseButton.removeFromParent()
+            pauseNode.addChild(pauseNode.resumeButton)
+            pauseNode.addChild(pauseNode.homeButton)
+            pauseNode.addChild(pauseNode.configButton)
+            
+        } else {
+            pauseNode.addChild(pauseNode.pauseButton)
+            pauseNode.resumeButton.removeFromParent()
+            pauseNode.homeButton.removeFromParent()
+            pauseNode.configButton.removeFromParent()
+        }
+    }
 }

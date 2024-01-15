@@ -1,80 +1,35 @@
 import SwiftUI
 import SpriteKit
 
-class GameScene: SKScene {
-    //characters
-    #warning("depois reolhar se precisa do player")
-    //var player: Player = Player()   
-    
+class GameScene: SKScene {    
     //pause
-    var pauseStatus: Bool = false
-    var pauseButton: SKSpriteNode? = nil
-    var resumeButton: SKSpriteNode? = nil
-    var homeButton: SKSpriteNode? = nil
-    var configButton: SKSpriteNode? = nil
+    var pauseNode: PauseNode
+    
+    override init(size: CGSize) {
+        self.pauseNode = PauseNode(size: size)
+        super.init(size: size)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     
     override func didMove(to view: SKView) {
        
         //Background
-        let appleBackground: SKSpriteNode = SKSpriteNode(imageNamed: "Background")
+        let appleBackground: SKSpriteNode = SKSpriteNode(imageNamed: "ApplePark")
         appleBackground.scale(to: size)
-        appleBackground.position = CGPoint(x: size.width/2, y: 0)
+        appleBackground.position = CGPoint(x: size.width/2, y: -20)
         appleBackground.name = "appleBackground"
         appleBackground.zPosition = 0
         appleBackground.anchorPoint = CGPoint(x: 0.5, y: 0)
         addChild(appleBackground)
         
-        let factory: SKSpriteNode = SKSpriteNode(imageNamed: "Factory")
-        factory.scale(to: CGSize(width: 750, height: 500))
-        factory.position = CGPoint(x: size.width/2, y: size.height/4)
-        factory.anchorPoint = CGPoint(x: 0.5, y: 0)
-        factory.name = "factory"
-        addChild(factory)
+        addChild(pauseNode)
+
         
-        //door
-        let door: SKSpriteNode = SKSpriteNode(imageNamed: "MainDoor")
-        door.scale(to: CGSize(width: 48, height: 64))
-        door.position = CGPoint(x: factory.position.x, y: factory.position.y)
-        door.zPosition = 1
-        door.name = "mainDoor"
-        door.anchorPoint = CGPoint(x: 0.5, y: 0)
-        addChild(door)
-        
-        //pause button
-        let pauseButton = SKSpriteNode(imageNamed: "pauseButton")
-        pauseButton.scale(to: CGSize(width: 48, height: 48))
-        pauseButton.position = CGPoint(x: size.width - 100, y: size.height - 100)
-        pauseButton.zPosition = 1
-        pauseButton.name = "pauseButton"
-        self.pauseButton = pauseButton
-        addChild(pauseButton)
-        
-        //resume button
-        let resumeButton = SKSpriteNode(imageNamed: "resumeButton")
-        resumeButton.scale(to: CGSize(width: 144, height: 144))
-        resumeButton.position = CGPoint(x: size.width/2, y: size.height/2)
-        resumeButton.zPosition = 1
-        resumeButton.name = "resumeButton"
-        self.resumeButton = resumeButton
-        
-        //home button
-        let homeButton = SKSpriteNode(imageNamed: "homeButton")
-        homeButton.scale(to: CGSize(width: 96, height: 96))
-        homeButton.position = CGPoint(x: size.width/2 - 200, y: size.height/2 - 48)
-        homeButton.zPosition = 1
-        homeButton.name = "homeButton"
-        self.homeButton = homeButton
-        //configuration button
-        let configButton = SKSpriteNode(imageNamed: "SoundButton")
-        if(!AppManager.shared.soundStatus) {
-            configButton.texture = SKTexture(imageNamed: "SoundButtonOff")
-        }
-        configButton.scale(to: CGSize(width: 96, height: 96))
-        configButton.position = CGPoint(x: size.width/2 + 200, y: size.height/2 - 48)
-        configButton.zPosition = 1
-        configButton.name = "configButton"
-        self.configButton = configButton
+        createLabelTap()
         
     }
     
@@ -83,62 +38,19 @@ class GameScene: SKScene {
             let location = touch.location(in: self)
             let touchedNode = atPoint(location)
             if let name = touchedNode.name {
+                pauseNode.checkPauseNodePressed(view: self, touchedNode: touchedNode)
                 if(name.contains("Button") && AppManager.shared.soundStatus) {
                     SoundManager.shared.playSound(soundName: "A0", fileType: "mp3")
                 }
                 switch name {                
-                case "pauseButton":  
-                    changePauseStatus()
-                    if let pauseButton = touchedNode as? SKSpriteNode {
-                        //animatePauseButton(button: pauseButton)    
+                case "appleBackground":
+                    if(!AppManager.shared.pauseStatus){
+                        guard let background = self.childNode(withName: "appleBackground"),
+                              let label = self.childNode(withName: "labelTap") else { return }
+                        animateScale(node: background)
+                        animateScale(node: label)
+                        transitionToPresentationScene()
                     }
-                    break
-                case "resumeButton":
-                    if let resumeButton = touchedNode as? SKSpriteNode {
-                        animateResumeButton(button: resumeButton)
-                    }
-                    break
-                case "homeButton":
-                    if let homeButton = touchedNode as? SKSpriteNode {
-                        animateHomeButton(button: homeButton)
-                    }
-                    break
-                case "configButton":
-//                    if let soundButton = touchedNode as? SKSpriteNode {
-//                        animateSoundButton(button: soundButton)
-//                    }
-                    let optionsNode = OptionsNode(size: CGSize(width: self.size.width, height: self.size.height))
-                    optionsNode.name = "optionsNode"
-                    optionsNode.position = CGPoint(x:self.size.width/2, y: self.size.height/2)
-                    optionsNode.zPosition = 2
-                    self.addChild(optionsNode)
-                    
-                    break
-                case "closeButton":
-                    if let optionNode = self.childNode(withName: "optionsNode") {
-                        optionNode.removeFromParent()
-                    }
-                    break
-                case "soundToggle":
-                    if let soundToggle = touchedNode as? SKSpriteNode {
-                        AppManager.shared.soundStatus.toggle()
-                        AppManager.shared.animateToggle(toggle: soundToggle, toggleState: AppManager.shared.soundStatus)
-                    }
-                    break
-                case "voiceOverToggle":
-                    if let voiceOverToggle = touchedNode as? SKSpriteNode {
-                        AppManager.shared.voiceOverStatus.toggle()
-                        AppManager.shared.animateToggle(toggle: voiceOverToggle, toggleState: AppManager.shared.voiceOverStatus)
-                    }
-                    break
-                case "mainDoor":
-                    guard let door = touchedNode as? SKSpriteNode,
-                          let background = self.childNode(withName: "appleBackground") as? SKSpriteNode,
-                          let factory = self.childNode(withName: "factory") as? SKSpriteNode else { return }
-                    animateOpenDoor(node: door)
-                    animateScaling(node: background)
-                    animateScaling(node: factory)
-                    transitionToPresentationScene()
                     break
                 default:
                     break
@@ -146,7 +58,12 @@ class GameScene: SKScene {
             }
         }
     }
-    
+    func animateScale(node: SKNode) {
+        let scale = SKAction.scale(by: 2, duration: 2)
+        let fade = SKAction.fadeOut(withDuration: 2)
+        let actionGroup = SKAction.group([scale, fade])
+        node.run(actionGroup)
+    }
     override func update(_ currentTime: TimeInterval) {
        
     }
@@ -159,65 +76,36 @@ class GameScene: SKScene {
             self.view?.presentScene(presentation)
         }
         
-    }
-    func animateResumeButton(button: SKSpriteNode) {
-        button.texture = SKTexture(imageNamed: "resumeButtonPressed")
-        let waitForAnimation = SKAction.wait(forDuration: 0.2)   
-        let sequence = SKAction.sequence([waitForAnimation])
-        self.run(sequence) { 
-            self.changePauseStatus()
+    }   
+        
+    func createLabelTap() {
+        let label = SKLabelNode(text: "Let's go to the Apple Park!\n       Tap on the Screen!")
+        label.fontName = AppManager.shared.appFont
+        label.fontSize = 64
+        label.numberOfLines = 2
+        label.fontColor = .white
+        label.position = CGPoint(x: self.size.width/2, y: self.size.height/9)
+        label.alpha = 0
+        label.zPosition = 3
+        label.name = "labelTap"
+        
+
+        self.addChild(label)
+        let wait = SKAction.wait(forDuration: 1)
+        let fade = SKAction.fadeIn(withDuration: 0.5)
+        let scaleUp = SKAction.scale(by: 1.2, duration: 1.5)
+        let scaleDown = SKAction.scale(by: 1.0/1.2, duration: 1.5)
+        let fadeOut = SKAction.fadeAlpha(to: 0.3, duration: 1.5)
+        let fadeIn = SKAction.fadeAlpha(to: 1, duration: 1.5)
+        let fadeSequence = SKAction.sequence([fadeOut, fadeIn])
+        let scaleSequence = SKAction.sequence([scaleUp, scaleDown])
+        let sequence = SKAction.sequence([wait, fade])
+        let group = SKAction.group([SKAction.repeatForever(fadeSequence), SKAction.repeatForever(scaleSequence)])
+        label.run(sequence) {
+            label.run(group)
         }
+
     }
-    func animateHomeButton(button: SKSpriteNode) {
-        button.texture = SKTexture(imageNamed: "homeButtonPressed")
-        let waitForAnimation = SKAction.wait(forDuration: 0.2)   
-        let fadeOut = SKAction.fadeOut(withDuration: 0.4)
-        let sequence = SKAction.sequence([waitForAnimation, fadeOut])
-        self.run(sequence) { 
-            self.changePauseStatus()
-            let menuScene = MenuScene(size: self.size)
-            menuScene.scaleMode = self.scaleMode
-            self.view?.presentScene(menuScene)    
-        }
-    }
-    
-    func animateScaling(node: SKSpriteNode) {
-        let scale = SKAction.scale(by: 2, duration: 2)
-        let fade = SKAction.fadeOut(withDuration: 2)
-        let actionGroup = SKAction.group([scale, fade])
-        node.run(actionGroup)
-    }
-    func animateOpenDoor(node: SKSpriteNode) {
-        let scale = SKAction.scale(by: 2,duration: 2)
-        let fade = SKAction.fadeOut(withDuration: 2)
-        let changeTexture = SKAction.run {
-            node.texture = SKTexture(imageNamed: "DoorOpening")
-        }
-        let changeScaleFade = SKAction.group([scale, fade, changeTexture])
-        node.run(changeScaleFade)
-    }
-    func changePauseStatus() {
-        self.pauseStatus.toggle()
-        guard let resumeButton = self.resumeButton,
-              let homeButton = self.homeButton,
-              let configButton = self.configButton
-        else { return }
-        if(pauseStatus) {
-            if let pauseButton = self.pauseButton {
-                pauseButton.removeFromParent()
-            }
-            addChild(resumeButton)
-            addChild(homeButton)
-            addChild(configButton)
-            
-        } else {
-            if let pauseButton = self.pauseButton {
-                addChild(pauseButton)
-            }
-            resumeButton.removeFromParent()
-            homeButton.removeFromParent()
-            configButton.removeFromParent()
-        }
-    }
+   
     
 }
