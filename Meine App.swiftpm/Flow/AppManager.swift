@@ -6,10 +6,20 @@ class AppManager {
     
     var soundStatus: Bool = true
     var pauseStatus: Bool = false 
+    var openDyslexicStatus: Bool = false
     var voiceOverStatus: Bool = false
-    var appFont: String = "Retro Gaming" // it's not working on playgrounds :/
-    
-    
+    var appFont: String = "Retro Gaming"
+    let buttonSound: String = "ButtonSound"
+    init() {
+            let cfURL = Bundle.main.url(forResource: "Retro Gaming", withExtension: "ttf")! as CFURL
+            let cfURLOpenD = Bundle.main.url(forResource: "OpenDyslexic3-Regular", withExtension: "ttf")! as CFURL
+            CTFontManagerRegisterFontsForURL(cfURL, CTFontManagerScope.process, nil)
+            CTFontManagerRegisterFontsForURL(cfURLOpenD, CTFontManagerScope.process, nil)
+            var fontNames: [[AnyObject]] = []
+            for name in UIFont.familyNames {
+                fontNames.append(UIFont.fontNames(forFamilyName: name) as [AnyObject])
+            }                
+    }
     func animateToggle(toggle: SKSpriteNode, toggleState: Bool) {
         let transitionTexture = SKTexture(imageNamed: "ToggleTransition")
         var nextTexture = SKTexture()
@@ -48,6 +58,11 @@ class AppManager {
         button.run(waitForAnimation) {
             button.texture = SKTexture(imageNamed: textureName)
         }
+    }
+    
+    func changeFont(){
+        AppManager.shared.openDyslexicStatus.toggle()
+        AppManager.shared.appFont = AppManager.shared.openDyslexicStatus ? "OpenDyslexic3" : "Retro Gaming"
     }
     
     func changePauseStatus(pauseNode: PauseNode) {

@@ -124,6 +124,11 @@ class PauseNode: SKNode {
                 AppManager.shared.animateToggle(toggle: voiceOverToggle, toggleState: AppManager.shared.voiceOverStatus)
             }
             break
+        case "fontToggle":
+            if let fontToggle = touchedNode as? SKSpriteNode {
+                AppManager.shared.changeFont()
+                AppManager.shared.animateToggle(toggle: fontToggle, toggleState: AppManager.shared.openDyslexicStatus)
+            }
         default:
             break
         }

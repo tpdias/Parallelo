@@ -30,8 +30,10 @@ class ChatNode: SKNode {
         message.zPosition = 2
         message.fontName = AppManager.shared.appFont
         message.fontSize = 28
+        message.numberOfLines = 5
         message.fontColor = .black
         message.horizontalAlignmentMode = .left
+        message.name = "message"
         addChild(message)
         
         //nextButton
@@ -54,7 +56,6 @@ class ChatNode: SKNode {
         button.run(wait){
             button.texture = SKTexture(imageNamed: "nextButtonGreen")
             button.name = "nextButtonGreen"
-            print("chaning")
         }
     }
 }
