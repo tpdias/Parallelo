@@ -20,7 +20,7 @@ class GameScene: SKScene {
         //Background
         let appleBackground: SKSpriteNode = SKSpriteNode(imageNamed: "ApplePark")
         appleBackground.scale(to: size)
-        appleBackground.position = CGPoint(x: size.width/2, y: -20)
+        appleBackground.position = CGPoint(x: size.width/2, y: -25)
         appleBackground.name = "appleBackground"
         appleBackground.zPosition = 0
         appleBackground.anchorPoint = CGPoint(x: 0.5, y: 0)
@@ -40,26 +40,25 @@ class GameScene: SKScene {
             if let name = touchedNode.name {
                 pauseNode.checkPauseNodePressed(view: self, touchedNode: touchedNode)
                 if(name.contains("Button") && AppManager.shared.soundStatus) {
-                    SoundManager.shared.playSound(soundName: "A0", fileType: "mp3")
+                    SoundManager.shared.playButtonSound()
                 }
-                switch name {                
-                case "appleBackground":
+                if(name.contains("Toggle") && AppManager.shared.soundStatus) {
+                    SoundManager.shared.playToggleSound()
+                }
                     if(!AppManager.shared.pauseStatus){
                         guard let background = self.childNode(withName: "appleBackground"),
-                              let label = self.childNode(withName: "labelTap") else { return }
+                              let label = self.childNode(withName: "labelTap"),
+                              let secondLabel = self.childNode(withName: "labelTap2") else { return }
                         animateScale(node: background)
                         animateScale(node: label)
+                        animateScale(node: secondLabel)
                         transitionToPresentationScene()
                     }
-                    break
-                default:
-                    break
-                }
             }
         }
     }
     func animateScale(node: SKNode) {
-        let scale = SKAction.scale(by: 2, duration: 2)
+        let scale = SKAction.scale(by: 1.5, duration: 2)
         let fade = SKAction.fadeOut(withDuration: 2)
         let actionGroup = SKAction.group([scale, fade])
         node.run(actionGroup)
@@ -79,18 +78,29 @@ class GameScene: SKScene {
     }   
         
     func createLabelTap() {
-        let label = SKLabelNode(text: "Let's go to the Apple Park!\n       Tap on the Screen!")
+        let label = SKLabelNode(text: "Let's go to the Apple Park!")
         label.fontName = AppManager.shared.appFont
         label.fontSize = 64
         label.numberOfLines = 2
         label.fontColor = .white
-        label.position = CGPoint(x: self.size.width/2, y: self.size.height/9)
+        label.position = CGPoint(x: self.size.width/2, y: self.size.height/7)
         label.alpha = 0
         label.zPosition = 3
         label.name = "labelTap"
         
+        let secondLine = SKLabelNode(text: "Tap on the Screen!")
+        secondLine.fontName = AppManager.shared.appFont
+        secondLine.fontSize = 64
+        secondLine.numberOfLines = 2
+        secondLine.fontColor = .white
+        secondLine.position = CGPoint(x: self.size.width/2, y: label.position.y - 100) 
+        secondLine.alpha = 0
+        secondLine.zPosition = 3
+        secondLine.name = "labelTap2"
 
         self.addChild(label)
+        self.addChild(secondLine)
+
         let wait = SKAction.wait(forDuration: 1)
         let fade = SKAction.fadeIn(withDuration: 0.5)
         let scaleUp = SKAction.scale(by: 1.2, duration: 1.5)
@@ -103,6 +113,9 @@ class GameScene: SKScene {
         let group = SKAction.group([SKAction.repeatForever(fadeSequence), SKAction.repeatForever(scaleSequence)])
         label.run(sequence) {
             label.run(group)
+        }
+        secondLine.run(sequence) {
+            secondLine.run(group)
         }
 
     }

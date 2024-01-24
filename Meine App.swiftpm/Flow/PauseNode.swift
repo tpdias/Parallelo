@@ -109,7 +109,13 @@ class PauseNode: SKNode {
             break
         case "closeButton":
             if let optionNode = self.childNode(withName: "optionsNode") {
-                optionNode.removeFromParent()
+                if let closeButton = touchedNode as? SKSpriteNode {
+                    AppManager.shared.animateButton(button: closeButton, textureName: "CloseButton")
+                    let wait = SKAction.wait(forDuration: 0.3)
+                    self.run(wait) {
+                        optionNode.removeFromParent()
+                    }
+                }
             }
             break
         case "soundToggle":

@@ -2,21 +2,36 @@ import SwiftUI
 import SpriteKit
 
 class OptionsScene: SKScene {
-        override func didMove(to view: SKView) {
-
+    override func didMove(to view: SKView) {
+        
         //Background
         let background = SKSpriteNode(imageNamed: "ApplePark")
         background.scale(to: size)
-        background.position = CGPoint(x: size.width/2, y: size.height/2 - 20)
+        background.position = CGPoint(x: size.width/2, y: size.height/2 - 25)
         background.zPosition = -1
         addChild(background)        
         
-        // Options Label
-        let titleOptions = SKSpriteNode(imageNamed: "titleOptions")
-        titleOptions.scale(to: CGSize(width: 200, height: 100))
-        titleOptions.position = CGPoint(x: size.width / 2, y: size.height / 2 + 200)
-        titleOptions.zPosition = 1
-        addChild(titleOptions)
+        
+        // First Line
+        let firstLineLabel = SKLabelNode(text: "Options")
+        firstLineLabel.fontName = AppManager.shared.appFont
+        firstLineLabel.fontColor = .white
+        firstLineLabel.fontSize = 48
+        firstLineLabel.horizontalAlignmentMode = .center
+        firstLineLabel.position = CGPoint(x: size.width / 2, y: size.height / 2 + 200)
+        firstLineLabel.zPosition = 2
+        addChild(firstLineLabel)
+        
+        
+        // First Line
+        let firstLineLabelB = SKLabelNode(text: "Options")
+        firstLineLabelB.fontName = AppManager.shared.appFont
+        firstLineLabelB.fontColor = .black
+        firstLineLabelB.fontSize = 48
+        firstLineLabelB.horizontalAlignmentMode = .center
+        firstLineLabelB.position = CGPoint(x: size.width / 2 - 8, y: size.height / 2 + 200 - 5)
+        firstLineLabelB.zPosition = 1
+        addChild(firstLineLabelB)
         
         
         //sound
@@ -53,7 +68,7 @@ class OptionsScene: SKScene {
         voiceOverSprite.scale(to: CGSize(width: 96, height: 48))
         voiceOverSprite.zPosition = 1
         addChild(voiceOverSprite)
-    
+        
         let fontLabel = SKLabelNode(text: "OpenDyslexic Font")
         fontLabel.fontSize = 34
         fontLabel.fontName = AppManager.shared.appFont
@@ -84,7 +99,10 @@ class OptionsScene: SKScene {
             
             if let name = touchedNode.name {
                 if(name.contains("Button") && AppManager.shared.soundStatus) {
-                    SoundManager.shared.playSound(soundName: "A0", fileType: "mp3")
+                    SoundManager.shared.playButtonSound()
+                }
+                if(name.contains("Toggle") && AppManager.shared.soundStatus) {
+                    SoundManager.shared.playToggleSound()
                 }
                 switch name {
                 case "backButton":
@@ -115,13 +133,13 @@ class OptionsScene: SKScene {
                         self.run(wait){
                             self.view?.presentScene(scene)
                         }
-                            
+                        
                         
                     }
                 default:
                     break
                 }
-            
+                
             }
         }
     }

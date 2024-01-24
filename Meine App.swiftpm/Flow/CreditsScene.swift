@@ -6,16 +6,31 @@ class CreditsScene: SKScene {
         //Background
         let background = SKSpriteNode(imageNamed: "ApplePark")
         background.scale(to: size)
-        background.position = CGPoint(x: size.width/2, y: size.height/2 - 20)
+        background.position = CGPoint(x: size.width/2, y: size.height/2 - 25)
         background.zPosition = -1
         addChild(background)
         
-        // Credits Label
-        let titleCredits = SKSpriteNode(imageNamed: "titleCredits")
-        titleCredits.scale(to: CGSize(width: 200, height: 100))
-        titleCredits.position = CGPoint(x: size.width / 2, y: size.height / 2 + 200)
-        titleCredits.zPosition = 1
-        addChild(titleCredits)
+        // First Line
+        let firstLineLabel = SKLabelNode(text: "Credits")
+        firstLineLabel.fontName = AppManager.shared.appFont
+        firstLineLabel.fontColor = .white
+        firstLineLabel.fontSize = 48
+        firstLineLabel.horizontalAlignmentMode = .center
+        firstLineLabel.position = CGPoint(x: size.width / 2, y: size.height / 2 + 200)
+        firstLineLabel.zPosition = 2
+        addChild(firstLineLabel)
+        
+        
+        // First Line
+        let firstLineLabelB = SKLabelNode(text: "Credits")
+        firstLineLabelB.fontName = AppManager.shared.appFont
+        firstLineLabelB.fontColor = .black
+        firstLineLabelB.fontSize = 48
+        firstLineLabelB.horizontalAlignmentMode = .center
+        firstLineLabelB.position = CGPoint(x: size.width / 2 - 8, y: size.height / 2 + 200 - 5)
+        firstLineLabelB.zPosition = 1
+        addChild(firstLineLabelB)
+        
         
         //Back Button, return to menu on click
         let backButton = SKSpriteNode(imageNamed: "BackButton")
@@ -35,7 +50,7 @@ class CreditsScene: SKScene {
                 if name == "backButton" {
                     // Voltar para o menu principal
                     if(AppManager.shared.soundStatus){
-                        SoundManager.shared.playSound(soundName: "A0", fileType: "mp3")
+                        SoundManager.shared.playButtonSound()
                     }
                     if let backButton = touchedNode as? SKSpriteNode {
                         let menuScene = MenuScene(size: size)

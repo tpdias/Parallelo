@@ -7,9 +7,9 @@ struct OnboardingView: View {
     @Binding var finishedOnboarding: Bool
     @State private var font: UIFont?
     private let onboardingPages = [
-        OnboardingPage(imageName: "onboarding1", title: "Welcome to MyApp", description: "Explore and enjoy our app's features."),
-        OnboardingPage(imageName: "onboarding2", title: "Get Started", description: "Sign up to personalize your experience."),
-        OnboardingPage(imageName: "onboarding3", title: "Ready to Go", description: "Start using our app now!")
+        OnboardingPage(imageName: "onboarding1", title: "Welcome to\nThiago's Parallel Adventure", description: "The app was designed to be used on the iPad in landscape mode."),
+        OnboardingPage(imageName: "onboarding2", title: "Configurations", description: "You can turn on/off the Sound and change the App Font in any page for a better experience.\nThe OpenDyslexic font is designed to enhance readability and accessibility for individuals with dyslexia."),
+        OnboardingPage(imageName: "onboarding3", title: "Voice Over", description: "You can activate the Voice Over in any configuration page and use simple voice commands, here are the list of commands: ")
     ]
 
     var body: some View {
@@ -29,7 +29,7 @@ struct OnboardingView: View {
                 }
             }) {
                 if(currentPage == (onboardingPages.count - 1)) {
-                    Text("Get Started")
+                    Text("Start")
                         .padding()
                         .font(Font.custom(AppManager.shared.appFont, size: 28))
                         .foregroundColor(.white)
@@ -55,21 +55,23 @@ struct OnboardingPageView: View {
     let onboardingPage: OnboardingPage
     
     var body: some View {
-        VStack {
-            Image(onboardingPage.imageName)
-                .resizable()
-                .scaledToFit()
-                .frame(height: 300)
-            
+        VStack {            
             Text(onboardingPage.title)
                 .fontWeight(.bold)
                 .font(Font.custom(AppManager.shared.appFont, size: 48))
                 .padding()
-            
+                .multilineTextAlignment(.center)
+                
             Text(onboardingPage.description)
                 .multilineTextAlignment(.center)
                 .font(Font.custom(AppManager.shared.appFont, size: 28))
                 .padding()
+                .padding(.top, 50)
+                
+            Image(onboardingPage.imageName)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 300)
         }
     }
 }

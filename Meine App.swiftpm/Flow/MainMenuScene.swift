@@ -69,7 +69,7 @@ class MenuScene: SKScene {
         let background = SKSpriteNode(imageNamed: "ApplePark")
         background.scale(to: size)
         background.anchorPoint = CGPoint(x: 0, y: 0)
-        background.position = CGPoint(x: 0, y: -20)
+        background.position = CGPoint(x: 0, y: -25)
         background.zPosition = -1
         addChild(background)
         
@@ -85,17 +85,50 @@ class MenuScene: SKScene {
         addChild(soundButton)
         
         
-        // Title
-        let titleMenu = SKSpriteNode(imageNamed: "TitleMenu")
-        titleMenu.scale(to: CGSize(width: 192, height: 96))
-        titleMenu.position = CGPoint(x: size.width / 2, y: size.height / 2 + 192)
-        titleMenu.zPosition = 1
-        addChild(titleMenu)
+        // First Line
+        let firstLineLabel = SKLabelNode(text: "Thiago's")
+        firstLineLabel.fontName = AppManager.shared.appFont
+        firstLineLabel.fontColor = .white
+        firstLineLabel.fontSize = 48
+        firstLineLabel.horizontalAlignmentMode = .center
+        firstLineLabel.position = CGPoint(x: size.width / 2, y: size.height / 2 + 100)
+        firstLineLabel.zPosition = 2
+        addChild(firstLineLabel)
+        
+        // Second Line
+        let secondLineLabel = SKLabelNode(text: "Parallel Adventure")
+        secondLineLabel.fontName = AppManager.shared.appFont
+        secondLineLabel.fontColor = .white
+        secondLineLabel.fontSize = 48
+        secondLineLabel.horizontalAlignmentMode = .center
+        secondLineLabel.position = CGPoint(x: size.width / 2, y: size.height / 2 + 100 - firstLineLabel.frame.size.height)
+        secondLineLabel.zPosition = 2
+        addChild(secondLineLabel)
+        
+        // First Line
+        let firstLineLabelB = SKLabelNode(text: "Thiago's")
+        firstLineLabelB.fontName = AppManager.shared.appFont
+        firstLineLabelB.fontColor = .black
+        firstLineLabelB.fontSize = 48
+        firstLineLabelB.horizontalAlignmentMode = .center
+        firstLineLabelB.position = CGPoint(x: size.width / 2 - 8, y: size.height / 2 + 100 - 5)
+        firstLineLabelB.zPosition = 1
+        addChild(firstLineLabelB)
+        
+        // Second Line
+        let secondLineLabelB = SKLabelNode(text: "Parallel Adventure")
+        secondLineLabelB.fontName = AppManager.shared.appFont
+        secondLineLabelB.fontColor = .black
+        secondLineLabelB.fontSize = 48
+        secondLineLabelB.horizontalAlignmentMode = .center
+        secondLineLabelB.position = CGPoint(x: size.width / 2 - 8, y: size.height / 2 + 100 - 5 - firstLineLabelB.frame.size.height)
+        secondLineLabelB.zPosition = 1
+        addChild(secondLineLabelB)
         
         // Botton "Play"
         let playButton = SKSpriteNode(imageNamed: "Button")
         playButton.scale(to: CGSize(width: 192, height: 96))
-        playButton.position = CGPoint(x: size.width / 2, y: size.height / 2 - 70)
+        playButton.position = CGPoint(x: size.width / 2, y: size.height / 2 - 100)
         playButton.name = "playButton"
         addChild(playButton)
         
@@ -111,7 +144,7 @@ class MenuScene: SKScene {
         // Button "Configurations"
         let optionsButton = SKSpriteNode(imageNamed: "Button")
         optionsButton.scale(to: CGSize(width: 192, height: 96))
-        optionsButton.position = CGPoint(x: size.width / 2, y: size.height / 2 - 190)
+        optionsButton.position = CGPoint(x: size.width / 2, y: playButton.position.y - 120)
         optionsButton.name = "optionsButton"
         addChild(optionsButton)
         
@@ -126,7 +159,7 @@ class MenuScene: SKScene {
         // Button "Credits"
         let creditsButton = SKSpriteNode(imageNamed: "Button")
         creditsButton.scale(to: CGSize(width: 192, height: 96))
-        creditsButton.position = CGPoint(x: size.width / 2, y: size.height / 2 - 310)
+        creditsButton.position = CGPoint(x: size.width / 2, y: optionsButton.position.y - 120)
         creditsButton.name = "creditsButton"
         addChild(creditsButton)
         
@@ -146,7 +179,7 @@ class MenuScene: SKScene {
             
             if let name = touchedNode.name {
                 if(name.contains("Button") && AppManager.shared.soundStatus) {
-                    SoundManager.shared.playSound(soundName: "A0", fileType: "mp3")
+                    SoundManager.shared.playButtonSound()
                 }
                 switch name {
                 case "playButton":

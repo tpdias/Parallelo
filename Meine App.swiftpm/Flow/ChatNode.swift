@@ -21,23 +21,23 @@ class ChatNode: SKNode {
         nameLabel.zPosition = 2
         nameLabel.fontName = AppManager.shared.appFont
         nameLabel.fontSize = 28
-        nameLabel.fontColor = .black
+        nameLabel.fontColor = .white
         nameLabel.horizontalAlignmentMode = .left
         addChild(nameLabel)
         //Message
         let message = SKLabelNode(text: message)
-        message.position = CGPoint(x: 40, y: nameLabel.position.y - nameLabel.fontSize)
+        message.position = CGPoint(x: 40, y: nameLabel.position.y - nameLabel.fontSize * 2)
         message.zPosition = 2
         message.fontName = AppManager.shared.appFont
         message.fontSize = 28
         message.numberOfLines = 5
-        message.fontColor = .black
+        message.fontColor = .white
         message.horizontalAlignmentMode = .left
         message.name = "message"
         addChild(message)
         
         //nextButton
-        let nextButtonTemp = SKSpriteNode(imageNamed: "nextButtonGray")
+        let nextButtonTemp = SKSpriteNode(imageNamed: "RightButtonGray")
         nextButtonTemp.position = CGPoint(x: nodeSize.width - 50 - 50, y: 50)
         nextButtonTemp.scale(to: CGSize(width: 50, height: 50))
         nextButtonTemp.zPosition = 2
@@ -54,7 +54,7 @@ class ChatNode: SKNode {
     func changeButtonColor(button: SKSpriteNode) {
         let wait = SKAction.wait(forDuration: 2)
         button.run(wait){
-            button.texture = SKTexture(imageNamed: "nextButtonGreen")
+            button.texture = SKTexture(imageNamed: "RightButton")
             button.name = "nextButtonGreen"
         }
     }
