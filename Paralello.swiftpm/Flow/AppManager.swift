@@ -6,6 +6,7 @@ class AppManager {
     static let shared = AppManager()
     
     var soundStatus: Bool = true
+    var biggerBackground = false
     var pauseStatus: Bool = false 
     var openDyslexicStatus: Bool = false
     var appFontSizeTexts: CGFloat = 28

@@ -158,7 +158,7 @@ class PresentationScene: SKScene {
                 //depois rever animacao de esperar 2 segundos antes de trocar
                 nextButton.texture = SKTexture(imageNamed: "RightButtonGray")
                 self.waiting = true
-                let wait = SKAction.wait(forDuration: 2.5)
+                let wait = SKAction.wait(forDuration: 1.5)
                 self.run(wait) {
                     nextButton.texture = SKTexture(imageNamed: "RightButton")
                     self.waiting = false

@@ -6,8 +6,10 @@ var onMenu = true
 struct MainMenuView: View {
     var body: some View {
         GeometryReader { geometry in 
-           // SpriteKitView(scene: SplashScene(size: CGSize(width: geometry.size.width, height: geometry.size.height)), size: geometry.size)
-            SpriteKitView(scene: SplashScene(size: CGSize(width: 1330, height: 998)), size: CGSize(width: 1330, height: 998))
+            //SpriteKitView(scene: SplashScene(size: CGSize(width: geometry.size.width, height: geometry.size.height)), size: geometry.size)
+            
+           SpriteKitView(scene: SplashScene(size: CGSize(width: 1330, height: 998)), size: CGSize(width: 1330, height: 998))
+               
         }
         .ignoresSafeArea()
     }
@@ -42,6 +44,9 @@ class SplashScene: SKScene {
     var textures: [SKTexture] = []
     override init(size: CGSize) {
         background = SKSpriteNode(imageNamed: "M3Splash0")
+        if(AppManager.shared.biggerBackground) {
+            background.scale(to: CGSize(width: 1520, height: 1050))
+        }
         background.scale(to: size)
         background.position = CGPoint(x: size.width/2, y: size.height/2)
         background.zPosition = 1

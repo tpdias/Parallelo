@@ -16,6 +16,7 @@ let package = Package(
         .iOSApplication(
             name: "Parallelo",
             targets: ["AppModule"],
+            teamIdentifier: "DFJUFQ6A3N",
             displayVersion: "1.0",
             bundleVersion: "1",
             appIcon: .asset("AppIcon"),

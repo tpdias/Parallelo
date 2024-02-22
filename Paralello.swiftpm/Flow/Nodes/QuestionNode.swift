@@ -31,6 +31,10 @@ class QuestionNode: SKNode {
             self.questions.append(questionNode)
         }
     }
+    func removeQuestions() {
+        self.removeAllChildren()
+        self.questions.removeAll()
+    }
 }
 
 class SingleQuestionNode: SKNode {
@@ -40,8 +44,8 @@ class SingleQuestionNode: SKNode {
         self.backgroundSize = size
         
         background = SKSpriteNode(imageNamed: "ChatBackground")
-        background.position = CGPoint(x: position.x / 2, y: position.y / 1.7 - CGFloat(70 * index))
-        background.scale(to: CGSize(width: size.width/2, height: size.height/10))
+        background.position = CGPoint(x: position.x / 2, y: position.y/2 + 200 - CGFloat(110 * index))
+        background.scale(to: CGSize(width: size.width/1.2, height: size.height/10))
         background.zPosition = 4
         background.name = "questionBackground" + String(index)
         
@@ -54,7 +58,7 @@ class SingleQuestionNode: SKNode {
         label.fontName = AppManager.shared.appFont
         label.fontColor = .white
         label.zPosition = 5
-        label.fontSize = 24
+        label.fontSize = 28
         label.name = "questionLabel" + String(index)
         addChild(label)
     }

@@ -130,16 +130,16 @@ class DeadlockGameScene: SKScene {
                     instructionNode.run(AppManager.shared.fadeOut) {
                         self.instructionNode.removeFromParent()
                         for worker in self.workers {
-                            worker.workAndStop(duration: 5)
+                            worker.workAndStop(duration: 3)
                         }
-                        self.run(SKAction.wait(forDuration: 5)) {
+                        self.run(SKAction.wait(forDuration: 3)) {
                             for worker in self.workers {
                                 if let requirement = worker.requirement {
                                     requirement.alpha = 1
                                 }
                             }
                         }
-                        self.run(SKAction.wait(forDuration: 7)) {
+                        self.run(SKAction.wait(forDuration: 5)) {
                             self.addChild(self.chatNode)
                         }
                     }

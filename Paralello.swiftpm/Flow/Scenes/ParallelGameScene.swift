@@ -155,30 +155,41 @@ class ParallelGameScene: SKScene {
                         }
                     }
                 }
-                if(name.contains("questionBackground") || name.contains("questionLabel")) {
-                    
-                    var texture = SKTexture(imageNamed: "ChatWrongBackground")
-                    if(name.contains("1")) {
-                        texture = SKTexture(imageNamed: "ChatRightBackground")
-                    }
-                    if let last = name.last {
-                       
-                        if let index = Int(last.description) {
-                          
-                            self.questionNode.questions[index].background.texture = texture
-                            
-                            if(index == 1) {
-                                let fadeOut = SKAction.fadeOut(withDuration: 1)
-                                self.run(fadeOut) {
-                                    self.questionNode.removeFromParent()
-                                    let deadlockGameScene = DeadlockGameScene(size: self.size)
-                                    deadlockGameScene.scaleMode = self.scaleMode
-                                    self.view?.presentScene(deadlockGameScene)
-                                }
-                            }
-                        }
-                    }
-                   
+                if(name == "next levelLabel" || name == "next levelButton") {
+                    let fadeOut = SKAction.fadeOut(withDuration: 1)
+                    SoundManager.shared.playButtonSound()
+                    instructionNode.startButton.texture = SKTexture(imageNamed: "ButtonPressed")
+                    instructionNode.startButtonLabel.position.y -= 10
+                    self.run(fadeOut) {
+                        self.questionNode.removeFromParent()
+                        let deadlockGameScene = DeadlockGameScene(size: self.size)
+                        deadlockGameScene.scaleMode = self.scaleMode
+                        self.view?.presentScene(deadlockGameScene)
+                }
+//                if(name.contains("questionBackground") || name.contains("questionLabel")) {
+//                    
+//                    var texture = SKTexture(imageNamed: "ChatWrongBackground")
+//                    if(name.contains("1")) {
+//                        texture = SKTexture(imageNamed: "ChatRightBackground")
+//                    }
+//                    if let last = name.last {
+//                       
+//                        if let index = Int(last.description) {
+//                          
+//                            self.questionNode.questions[index].background.texture = texture
+//                            
+//                            if(index == 1) {
+//                                let fadeOut = SKAction.fadeOut(withDuration: 1)
+//                                self.run(fadeOut) {
+//                                    self.questionNode.removeFromParent()
+//                                    let deadlockGameScene = DeadlockGameScene(size: self.size)
+//                                    deadlockGameScene.scaleMode = self.scaleMode
+//                                    self.view?.presentScene(deadlockGameScene)
+//                                }
+//                            }
+//                        }
+//                    }
+//                   
                 }
                 
             }
@@ -270,7 +281,7 @@ class ParallelGameScene: SKScene {
         SoundManager.shared.playAudio(audio: "Achievement", loop: false, volume: 0.1)
         self.macintosh.run(SKAction.fadeIn(withDuration: 1.5))
         
-        instructionNode = InstructionNode(instruction: "\tThis time we are going to have 4 stations, a fourth of the new MacBook M3 Pro full core capacity, by assigning each worker to a unique station, they can work without needing to wait to the station to be free, so the final result can be achived way faster!", title: "Now lets use Parallelization to Speed it Up!", size: size)
+        instructionNode = InstructionNode(instruction: "\tThis time we are going to have 2 stations, 8 times less than the new MacBook M3 Pro full core capacity, by assigning each worker to a unique station, they can work without needing to wait to the station to be free, so the final result can be achived way faster!", title: "Now lets use Parallelization to Speed it Up!", size: size)
         instructionNode.alpha = 0
         addChild(instructionNode)
         self.run(wait){  [self] in
@@ -303,11 +314,14 @@ class ParallelGameScene: SKScene {
                     removeStations()
                     let speedup: Float = Float(singleCoreTime)/Float(multiCoreTime)
                     let formattedSpeedup = String(format: "%.2f", speedup)
-                    instructionNode.instructionLabel.text = "Well done! Your time with the single core, one station, was \(singleCoreTime), your time with multiple stations, multi core, was \(multiCoreTime). You did the same task, but \(formattedSpeedup) times faster\nWhy the task was faster?"
-                    questionNode.addQuestions(questions: ["The workers did their tasks faster", "Two workers could work at the same time", "With more stations, the workers can make less work", "The workers helped each other on their tasks"])
-                    self.addChild(questionNode)
-                    instructionNode.startButton.removeFromParent()
-                    instructionNode.startButtonLabel.removeFromParent()
+                    instructionNode.instructionLabel.text = "Well done! Your time with the single core, one station, was \(singleCoreTime), your time with multiple stations, multi core, was \(multiCoreTime). You did the same task, but \(formattedSpeedup) times faster!\n\n\n"
+                    //questionNode.addQuestions(questions: ["The workers did their tasks faster", "Two workers could work at the same time", "With more stations, the workers can make less work", "The workers helped each other on their tasks"])
+                   // self.addChild(questionNode)
+                    //instructionNode.startButton.removeFromParent()
+                    //instructionNode.startButtonLabel.removeFromParent()
+                    instructionNode.changeButtonText(text: "Next Level")
+                    print(instructionNode.startButton.name)
+                    print(instructionNode.startButtonLabel.name)
                     lvl += 1
                 } 
             }

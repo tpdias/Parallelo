@@ -70,7 +70,7 @@ class ChatNode: SKNode {
     }
     func changeText(text: String) {
         self.textLabel.text = text
-        textLabel.position = CGPoint(x: 40, y: nameLabel.position.y - 56)
+        textLabel.position = CGPoint(x: 40, y: nameLabel.position.y - 60)
         let labelHeight = textLabel.calculateAccumulatedFrame().height
         
         textLabel.position.y -= labelHeight / 2
